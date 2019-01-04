@@ -13,7 +13,7 @@
 
                             {!! csrf_field() !!}
 
-                            <label for="name">Medio de Pago: </label>
+                            <label for="paymentMethod">Medio de Pago: </label>
 
                             <select name="paymentMethod" id="paymentMethod" class="form-control">
                                 @foreach ($paymentMethods as $paymentMethod)
@@ -21,7 +21,7 @@
                                 @endforeach
                             </select>
 
-                            <label for="name">Tipo de Cliente: </label>
+                            <label for="customerTypes">Tipo de Cliente: </label>
 
                             <select name="customerTypes" id="customerTypes" class="form-control">
                                 @foreach ($customerTypes as $customerType)
@@ -29,16 +29,20 @@
                                 @endforeach
                             </select>
 
-                            <label for="name">Entidad Bancaria: </label>
+                            @if(is_string($bankList))
+                                <b>{{$bankList}}</b>
 
-                            <select name="bankList" id="bankList" class="form-control">
-                                @foreach ($bankList as $bank)
-                                    <option value="{{ $bank['bankCode'] }}">{{ $bank['bankName'] }}</option>
-                                @endforeach
-                            </select>
+                            @else
+                                <label for="name">Entidad Bancaria: </label>
 
-                            <button type="submit">Crear Usuario</button>
-
+                                <select name="bankList" id="bankList" class="form-control">
+                                    @foreach ($bankList as $bank)
+                                        <option value="{{ $bank['bankCode'] }}">{{ $bank['bankName'] }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
+                            <br>
+                            <button type="submit">Continuar</button>
                         </form>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PaymentMethods;
 use App\Models\CustomerTypes;
+use Illuminate\Support\Facades\Cache;
 
 
 class PseController extends Controller
@@ -20,11 +21,27 @@ class PseController extends Controller
     {
         $paymentMethods = PaymentMethods::all();
         $customerTypes = CustomerTypes::all();
-        $bankList = $this->pse->getBankList();
+        $bankList = $this->getCacheBankList();
 
-        if(isset($bankList['getBankListResult']['item']) && !empty($bankList['getBankListResult']['item']))
-            $bankList = $bankList['getBankListResult']['item'];
+        return view('pse.index', compact('paymentMethods', 'customerTypes', 'bankList'));
+    }
 
-        return view('pse.index', compact('paymentMethods', 'customerTypes','bankList'));
+    private function getCacheBankList()
+    {
+        $bankList = Cache::get('bankList');
+
+        if (!Cache::has('bankList') || is_string($bankList)) {
+
+            $bankList = $this->pse->getBankList();
+
+            if (isset($bankList['getBankListResult']['item']) && !empty($bankList['getBankListResult']['item']))
+                $bankList = $bankList['getBankListResult']['item'];
+            else
+                $bankList = "No se pudo obtener la lista de Entidades Financieras, por favor intente más tarde";
+
+            Cache::put('bankList', $bankList, 1440);
+        }
+
+        return Cache::get('bankList');
     }
 }
