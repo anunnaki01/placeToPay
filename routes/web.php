@@ -18,7 +18,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/test','PseController@Index');
+Route::get('/pse','PseController@Index');
+Route::post('/pse/createTransaction', 'PseController@createTransaction');
+Route::get('/pse/transactionInformation', 'PseController@transactionInformation');
 
 
 

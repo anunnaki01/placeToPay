@@ -5,43 +5,53 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PaymentMethods;
 use App\Models\CustomerTypes;
-use Illuminate\Support\Facades\Cache;
+use App\Models\Transactions;
+use Pse;
+use App\Services\PseService;
+use App\Services\PseValidate;
 
 
 class PseController extends Controller
 {
     protected $pse;
+    protected $pseService;
 
     public function __construct()
     {
-        $this->pse = new \App\Services\PseService(env("PSE_IDENTIFICATION"), env("PSE_KEY"));
+        $this->pse = new Pse;
+        $this->pseService = new PseService($this->pse);
+        $this->pseService->autentication();
     }
 
     public function index()
     {
         $paymentMethods = PaymentMethods::all();
         $customerTypes = CustomerTypes::all();
-        $bankList = $this->getCacheBankList();
+        $bankList = $this->pseService->getCacheBankList();
 
         return view('pse.index', compact('paymentMethods', 'customerTypes', 'bankList'));
     }
 
-    private function getCacheBankList()
+    public function createTransaction()
     {
-        $bankList = Cache::get('bankList');
+        $PseValidate = new PseValidate();
+        $data = request()->validate($PseValidate->getRequiereInputs(), $PseValidate->getMessageInputs());
 
-        if (!Cache::has('bankList') || is_string($bankList)) {
+        $this->pseService->setPayerInformation($data);
+        $this->pseService->setTransactionInformation($data);
+        $response = $this->pseService->createTransaction();
 
-            $bankList = $this->pse->getBankList();
+        if (isset($response['returnCode']) == 'SUCCESS') {
 
-            if (isset($bankList['getBankListResult']['item']) && !empty($bankList['getBankListResult']['item']))
-                $bankList = $bankList['getBankListResult']['item'];
-            else
-                $bankList = "No se pudo obtener la lista de Entidades Financieras, por favor intente más tarde";
-
-            Cache::put('bankList', $bankList, 1440);
+            Transactions::create($response);
+            return redirect($response['bankURL']);
         }
+    }
 
-        return Cache::get('bankList');
+    public function transactionInformation($transId)
+    {
+
+        $response = $this->pseService->getTransactionInformation($transId);
+        dd($response);
     }
 }
