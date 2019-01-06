@@ -90,6 +90,15 @@
       <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
       <path value="$PROJECT_DIR$/vendor/beyondcode/laravel-dump-server" />
       <path value="$PROJECT_DIR$/vendor/theluguiant/pse" />
+      <path value="$PROJECT_DIR$/vendor/colinodell/json5" />
+      <path value="$PROJECT_DIR$/vendor/pragmarx/coollection" />
+      <path value="$PROJECT_DIR$/vendor/pragmarx/countries" />
+      <path value="$PROJECT_DIR$/vendor/pragmarx/ia-arr" />
+      <path value="$PROJECT_DIR$/vendor/pragmarx/ia-str" />
+      <path value="$PROJECT_DIR$/vendor/pragmarx/ia-collection" />
+      <path value="$PROJECT_DIR$/vendor/nette/finder" />
+      <path value="$PROJECT_DIR$/vendor/nette/caching" />
+      <path value="$PROJECT_DIR$/vendor/nette/utils" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
