@@ -17,7 +17,7 @@ class CreateTransactionsTable extends Migration
             $table->increments('id');
             $table->string('transaction_id');
             $table->string('session_id');
-            $table->string('reference');
+            $table->string('reference')->nullable();
             $table->string('trazability_code');
             $table->enum('transaction_state', ['APPROVED', 'PENDING', 'FAILED', 'DECLINED']);
             $table->unsignedInteger('user_id')->nullable();

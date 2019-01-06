@@ -45,4 +45,9 @@ class PseValidate
             'mobile.required' => 'El campo Celular es obligatorio.',
         ];
     }
+
+    public function validateInputs()
+    {
+        return request()->validate($this->getRequiereInputs(), $this->getMessageInputs());
+    }
 }

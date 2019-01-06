@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
+
 use Pse;
+use Session;
+use App\Models\Transactions;
 
 class PseService
 {
@@ -50,7 +53,7 @@ class PseService
     {
         $this->pse->services->setBankCode($data['bankCode']);
         $this->pse->services->setBankInterface($data['bankInterface']);
-        $this->pse->services->setReturnURL('http://placetopay.local.com/pse');
+        $this->pse->services->setReturnURL('http://placetopay.local.com/pse/transactionInformation');
         $this->pse->services->setReference('kad2568994dasuudadsasaassasss');
         $this->pse->services->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut');
         $this->pse->services->setLanguage('es');
@@ -70,15 +73,38 @@ class PseService
 
             $bankList = $this->pse->services->getBankList();
 
-            if (isset($bankList['getBankListResult']['item']) && !empty($bankList['getBankListResult']['item']))
+            if (isset($bankList['getBankListResult']['item']) && !empty($bankList['getBankListResult']['item'])) {
                 $bankList = $bankList['getBankListResult']['item'];
-            else
+            } else {
                 $bankList = "No se pudo obtener la lista de Entidades Financieras, por favor intente más tarde";
+            }
 
             Cache::put('bankList', $bankList, 1440);
         }
 
         return Cache::get('bankList');
+    }
+
+    public function validateInputs()
+    {
+        $PseValidate = new PseValidate();
+        return $PseValidate->validateInputs();
+    }
+
+    public function saveTransaction($response)
+    {
+        session(['transaction_id' => $response['transactionID']]);
+
+        $data['transaction_id'] = $response['transactionID'];
+        $data['session_id'] = $response['sessionID'];
+        $data['reference'] = null;
+        $data['trazability_code'] = $response['trazabilityCode'];
+        $data['transaction_state'] = 'PENDING';
+        $data['user_id'] = $response['user_id'];
+
+        Transactions::create($data);
+
+        return redirect($response['bankURL']);
     }
 
 }
