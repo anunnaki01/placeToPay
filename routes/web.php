@@ -11,13 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 
 Auth::routes();
-
-//Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/pse','PseController@Index')->name('payment');
 Route::post('/pse/createTransaction', 'PseController@createTransaction');
 Route::get('/pse/transactionInformation', 'PseController@transactionInformation');

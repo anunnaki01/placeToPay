@@ -107,4 +107,10 @@ class PseService
         return redirect($response['bankURL']);
     }
 
+    public function validateReturnCode($returnCode)
+    {
+        $PseValidate = new PseValidate();
+        return $PseValidate->validateReturnCode($returnCode);
+    }
+
 }

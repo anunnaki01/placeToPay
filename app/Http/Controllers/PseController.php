@@ -38,13 +38,13 @@ class PseController extends Controller
 
         $response = $this->pseService->createTransaction();
 
-        if (isset($response['returnCode']) && $response['returnCode'] == 'SUCCESS') {
+        if (isset($response['returnCode']) && $this->pseService->validateReturnCode($response['returnCode'])) {
             $response['user_id'] = auth()->user()->id;
             $this->pseService->saveTransaction($response);
             return redirect($response['bankURL']);
-        } else {
-            return redirect('pse')->with('responseReasonText', $response['responseReasonText'])->withInput();
         }
+
+        return redirect('pse')->with('responseReasonText', $response['responseReasonText'])->withInput();
     }
 
     public function transactionInformation()
@@ -56,12 +56,11 @@ class PseController extends Controller
     {
         $response = $this->pseService->getTransactionInformation($id);
 
-        if (isset($response['getTransactionInformationResult']) && $response['getTransactionInformationResult']['returnCode'] == 'SUCCESS') {
-            $response['getTransactionInformationResult']['responseReasonText'] = utf8_encode($response['getTransactionInformationResult']['responseReasonText']);
+        if (isset($response['getTransactionInformationResult']) && $this->pseService->validateReturnCode($response['getTransactionInformationResult']['returnCode'])) {
             return view('pse.transactionInformation')->with('transactionInformation',
                 $response['getTransactionInformationResult']);
-        } else {
-            return view('pse.transactionInformation')->with('errorMessage', utf8_encode($response['faultstring']));
         }
+
+        return view('pse.transactionInformation')->with('errorMessage', $response['faultstring']);
     }
 }

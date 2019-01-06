@@ -7,7 +7,7 @@
                 <div class="card">
                     @if(!empty($errorMessage))
                         <div class="alert alert-danger">
-                            <strong>{{$errorMessage}}</strong>
+                            <strong>{{utf8_encode($errorMessage)}}</strong>
                         </div>
 
                     @else
@@ -48,7 +48,7 @@
                                     </tr>
                                     <tr>
                                         <th scope="row">Descripcion</th>
-                                        <th scope="col">{{$transactionInformation['responseReasonText']}}</th>
+                                        <th scope="col">{{utf8_encode($transactionInformation['responseReasonText'])}}</th>
                                     </tr>
                                     </thead>
                                 </table>
