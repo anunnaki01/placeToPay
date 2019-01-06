@@ -11,15 +11,20 @@
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/home', function () {
+    return redirect()->route('transactions');
+});
 
 Auth::routes();
+Route::get('/transactions','PseController@transactions')->name('transactions');
 Route::get('/pse','PseController@Index')->name('payment');
 Route::post('/pse/createTransaction', 'PseController@createTransaction');
 Route::get('/pse/transactionInformation', 'PseController@transactionInformation');
-Route::get('/pse/findTransactionInformation/{id}', 'PseController@findTransactionInformation');
+Route::get('/pse/transaction/{id}', 'PseController@findTransactionInformation')->name('details.transaction');
 
 
 

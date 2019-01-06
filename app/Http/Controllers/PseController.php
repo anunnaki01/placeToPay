@@ -38,29 +38,31 @@ class PseController extends Controller
 
         $response = $this->pseService->createTransaction();
 
-        if (isset($response['returnCode']) && $this->pseService->validateReturnCode($response['returnCode'])) {
-            $response['user_id'] = auth()->user()->id;
-            $this->pseService->saveTransaction($response);
-            return redirect($response['bankURL']);
-        }
-
-        return redirect('pse')->with('responseReasonText', $response['responseReasonText'])->withInput();
+        return $this->pseService->getRedirectTransaction($response);
     }
 
     public function transactionInformation()
     {
-        return redirect('pse/findTransactionInformation/' . session()->pull('transaction_id'));
-    }
+        $transaction_id = session()->pull('transaction_id');
+        $response = $this->pseService->getTransactionInformation($transaction_id);
 
-    public function findTransactionInformation($id)
-    {
-        $response = $this->pseService->getTransactionInformation($id);
-
-        if (isset($response['getTransactionInformationResult']) && $this->pseService->validateReturnCode($response['getTransactionInformationResult']['returnCode'])) {
-            return view('pse.transactionInformation')->with('transactionInformation',
-                $response['getTransactionInformationResult']);
+        if (!empty($response['getTransactionInformationResult'])) {
+            $this->pseService->saveTransaction($response['getTransactionInformationResult']);
+            return redirect()->route('details.transaction', ['id' => $transaction_id]);
         }
 
         return view('pse.transactionInformation')->with('errorMessage', $response['faultstring']);
+    }
+
+    public function findTransactionInformation($transaction_id)
+    {
+        $transaction = $this->pseService->getTransaction($transaction_id);
+        return view('pse.transactionInformation')->with('transactionInformation', $transaction);
+    }
+
+    public function transactions()
+    {
+        $transactions = $this->pseService->getTransactionsByUser();
+        return view('pse.transactions', compact('transactions'));
     }
 }

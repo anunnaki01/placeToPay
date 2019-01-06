@@ -12,6 +12,9 @@ class Transactions extends Model
         'reference',
         'trazability_code',
         'transaction_state',
+        'description',
+        'bank_process_date',
+        'request_date',
         'user_id',
     ];
 }
