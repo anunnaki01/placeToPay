@@ -23,8 +23,11 @@ class ReviewTransactions extends Controller
         foreach ($transactions as $transaction) {
             $response = $this->pseService->getTransactionInformation($transaction->transaction_id);
             if (!empty($response['getTransactionInformationResult'])) {
+                dd($response);
                 $this->pseService->saveTransaction($response['getTransactionInformationResult']);
             }
         }
+
+        return redirect()->back();
     }
 }
