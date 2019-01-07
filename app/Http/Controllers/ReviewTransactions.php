@@ -20,14 +20,18 @@ class ReviewTransactions extends Controller
     {
         $transactions = Transactions::where('transaction_state', 'PENDING')->get();
 
+        if ($transactions->count() == 0) {
+            echo 'No hay transacciones para procesar';
+            return false;
+        }
+        echo "<b>Transacciones procesadas: </b><br>";
         foreach ($transactions as $transaction) {
             $response = $this->pseService->getTransactionInformation($transaction->transaction_id);
+
             if (!empty($response['getTransactionInformationResult'])) {
-                dd($response);
+                echo $response['getTransactionInformationResult']['transactionID'] . "<br>";
                 $this->pseService->saveTransaction($response['getTransactionInformationResult']);
             }
         }
-
-        return redirect()->back();
     }
 }
