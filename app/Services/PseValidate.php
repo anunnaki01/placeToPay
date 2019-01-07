@@ -4,6 +4,8 @@ namespace App\Services;
 
 class PseValidate
 {
+    const RETURN_CODE_SUCCES = 'SUCCESS';
+
     public function getRequiereInputs()
     {
         return [
@@ -49,5 +51,10 @@ class PseValidate
     public function validateInputs()
     {
         return request()->validate($this->getRequiereInputs(), $this->getMessageInputs());
+    }
+
+    public function validateReturnCode($returnCode)
+    {
+        return (self::RETURN_CODE_SUCCES == $returnCode);
     }
 }

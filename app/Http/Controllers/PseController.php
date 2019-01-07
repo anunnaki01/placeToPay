@@ -38,30 +38,31 @@ class PseController extends Controller
 
         $response = $this->pseService->createTransaction();
 
-        if (isset($response['returnCode']) && $response['returnCode'] == 'SUCCESS') {
-            $response['user_id'] = auth()->user()->id;
-            $this->pseService->saveTransaction($response);
-            return redirect($response['bankURL']);
-        } else {
-            return redirect('pse')->with('responseReasonText', $response['responseReasonText'])->withInput();
-        }
+        return $this->pseService->getRedirectTransaction($response);
     }
 
     public function transactionInformation()
     {
-        return redirect('pse/findTransactionInformation/' . session()->pull('transaction_id'));
+        $transaction_id = session()->pull('transaction_id');
+        $response = $this->pseService->getTransactionInformation($transaction_id);
+
+        if (!empty($response['getTransactionInformationResult'])) {
+            $this->pseService->saveTransaction($response['getTransactionInformationResult']);
+            return redirect()->route('details.transaction', ['id' => $transaction_id]);
+        }
+
+        return view('pse.transactionInformation')->with('errorMessage', $response['faultstring']);
     }
 
-    public function findTransactionInformation($id)
+    public function findTransactionInformation($transaction_id)
     {
-        $response = $this->pseService->getTransactionInformation($id);
+        $transaction = $this->pseService->getTransaction($transaction_id);
+        return view('pse.transactionInformation')->with('transactionInformation', $transaction);
+    }
 
-        if (isset($response['getTransactionInformationResult']) && $response['getTransactionInformationResult']['returnCode'] == 'SUCCESS') {
-            $response['getTransactionInformationResult']['responseReasonText'] = utf8_encode($response['getTransactionInformationResult']['responseReasonText']);
-            return view('pse.transactionInformation')->with('transactionInformation',
-                $response['getTransactionInformationResult']);
-        } else {
-            return view('pse.transactionInformation')->with('errorMessage', utf8_encode($response['faultstring']));
-        }
+    public function transactions()
+    {
+        $transactions = $this->pseService->getTransactionsByUser();
+        return view('pse.transactions', compact('transactions'));
     }
 }

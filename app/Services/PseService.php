@@ -53,17 +53,16 @@ class PseService
     {
         $this->pse->services->setBankCode($data['bankCode']);
         $this->pse->services->setBankInterface($data['bankInterface']);
-        $this->pse->services->setReturnURL('http://placetopay.local.com/pse/transactionInformation');
+        $this->pse->services->setReturnURL(env('PSE_RETURN_URL'));
         $this->pse->services->setReference('kad2568994dasuudadsasaassasss');
         $this->pse->services->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut');
-        $this->pse->services->setLanguage('es');
-        $this->pse->services->setCurrency('COP');
-        $this->pse->services->setTotalAmount(15000.0);
-        $this->pse->services->setTaxAmount((double)5);
-        $this->pse->services->setDevolutionBase(2.0);
-        $this->pse->services->setTipAmount(1.0);
+        $this->pse->services->setLanguage(env("PSE_LANGUAGE"));
+        $this->pse->services->setCurrency(env("PSE_CURRENCY"));
+        $this->pse->services->setTotalAmount((double)env("PSE_TOTAL_AMOUNT"));
+        $this->pse->services->setTaxAmount((double)env("PSE_TAX_AMOUNT"));
+        $this->pse->services->setDevolutionBase((double)env("PSE_DEVOLUTION_BASE"));
+        $this->pse->services->setTipAmount((double)env("PSE_TIP_AMOUNT"));
     }
-
 
     public function getCacheBankList()
     {
@@ -93,18 +92,59 @@ class PseService
 
     public function saveTransaction($response)
     {
-        session(['transaction_id' => $response['transactionID']]);
+        $transaction = Transactions::where('transaction_id', $response['transactionID'])->first();
+
+        if (!empty($transaction)) {
+
+
+            $transaction->reference = $response['reference'];
+            $transaction->transaction_state = $response['transactionState'];
+            $transaction->request_date = $response['requestDate'];
+            $transaction->bank_process_date = $response['bankProcessDate'];
+            $transaction->description = utf8_encode($response['responseReasonText']);
+
+            return $transaction->save();
+        }
+
 
         $data['transaction_id'] = $response['transactionID'];
         $data['session_id'] = $response['sessionID'];
+        $data['request_date'] = null;
+        $data['bank_process_date'] = null;
+        $data['description'] = utf8_encode($response['responseReasonText']);
         $data['reference'] = null;
         $data['trazability_code'] = $response['trazabilityCode'];
         $data['transaction_state'] = 'PENDING';
         $data['user_id'] = $response['user_id'];
 
-        Transactions::create($data);
-
-        return redirect($response['bankURL']);
+        return Transactions::create($data);
     }
 
+    public function getTransaction($transaction_id)
+    {
+        return Transactions::where('transaction_id', $transaction_id)->first();
+    }
+
+    public function validateReturnCode($returnCode)
+    {
+        $PseValidate = new PseValidate();
+        return $PseValidate->validateReturnCode($returnCode);
+    }
+
+    public function getRedirectTransaction($response)
+    {
+        if (isset($response['returnCode']) && $this->validateReturnCode($response['returnCode'])) {
+            $response['user_id'] = auth()->user()->id;
+            session(['transaction_id' => $response['transactionID']]);
+            $this->saveTransaction($response);
+            return redirect($response['bankURL']);
+        }
+
+        return redirect('pse')->with('responseReasonText', $response['responseReasonText'])->withInput();
+    }
+
+    public function getTransactionsByUser()
+    {
+        return Transactions::where('user_id', auth()->user()->id)->get();
+    }
 }

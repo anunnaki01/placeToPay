@@ -15,13 +15,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Route::get('/home', function () {
+    return redirect()->route('transactions');
+});
 
-//Route::get('/home', 'HomeController@index')->name('home');
+Auth::routes();
+Route::get('/transactions','PseController@transactions')->name('transactions');
 Route::get('/pse','PseController@Index')->name('payment');
+Route::get('/reviewTransactions','ReviewTransactions@Index')->name('reviewTransactions');
 Route::post('/pse/createTransaction', 'PseController@createTransaction');
 Route::get('/pse/transactionInformation', 'PseController@transactionInformation');
-Route::get('/pse/findTransactionInformation/{id}', 'PseController@findTransactionInformation');
+Route::get('/pse/transaction/{id}', 'PseController@findTransactionInformation')->name('details.transaction');
 
 
 
