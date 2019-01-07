@@ -9,8 +9,13 @@
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-12 text-right"><a href="{{url('/pse')}}" class="btn btn-primary">Nueva
-                                    Transacción</a></div>
+                            <div class="col-md-12 text-right">
+
+                                <a href="{{url('/pse')}}" class="btn btn-success">Nueva
+                                    Transacción</a>
+                                <a href="{{url('/reviewTransactions')}}" class="btn btn-primary">Revisar Transacciones pendientes</a>
+
+                            </div>
 
                         </div>
                         <br>

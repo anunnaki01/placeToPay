@@ -106,7 +106,6 @@ class PseService
             return $transaction->save();
         }
 
-
         $data['transaction_id'] = $response['transactionID'];
         $data['session_id'] = $response['sessionID'];
         $data['request_date'] = null;
