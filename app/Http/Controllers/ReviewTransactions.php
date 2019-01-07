@@ -16,22 +16,32 @@ class ReviewTransactions extends Controller
         $this->pseService = new PseService($this->pse);
     }
 
-    public function index()
+    public function process()
     {
         $transactions = Transactions::where('transaction_state', 'PENDING')->get();
+        $transactionsProcesed = ['status' => false];
 
         if ($transactions->count() == 0) {
-            echo 'No hay transacciones para procesar';
-            return false;
+            $transactionsProcesed['message'] = 'No hay transacciones pendientes...';
+            return $transactionsProcesed;
         }
-        echo "<b>Transacciones procesadas: </b><br>";
+
+        $transactionsProcesed['status'] = true;
+
         foreach ($transactions as $transaction) {
+
             $response = $this->pseService->getTransactionInformation($transaction->transaction_id);
 
             if (!empty($response['getTransactionInformationResult'])) {
-                echo $response['getTransactionInformationResult']['transactionID'] . "<br>";
+                $transactionsProcesed['transactions'][] = $response['getTransactionInformationResult']['transactionID'];
                 $this->pseService->saveTransaction($response['getTransactionInformationResult']);
             }
         }
+        return $transactionsProcesed;
+    }
+
+    public function index()
+    {
+        return redirect('transactions')->with('transactionsProcesed', $this->process());
     }
 }
