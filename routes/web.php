@@ -22,6 +22,7 @@ Route::get('/home', function () {
 Auth::routes();
 Route::get('/transactions','PseController@transactions')->name('transactions');
 Route::get('/pse','PseController@Index')->name('payment');
+Route::get('/reviewTransactions','ReviewTransactions@Index')->name('reviewTransactions');
 Route::post('/pse/createTransaction', 'PseController@createTransaction');
 Route::get('/pse/transactionInformation', 'PseController@transactionInformation');
 Route::get('/pse/transaction/{id}', 'PseController@findTransactionInformation')->name('details.transaction');
