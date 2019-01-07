@@ -13,11 +13,29 @@
 
                                 <a href="{{url('/pse')}}" class="btn btn-success">Nueva
                                     Transacción</a>
-                                <a href="{{url('/reviewTransactions')}}" class="btn btn-primary">Revisar Transacciones pendientes</a>
+                                <a href="{{url('/reviewTransactions')}}" class="btn btn-primary">Revisar Transacciones
+                                    pendientes</a>
 
                             </div>
-
                         </div>
+
+                        <div class="row">
+                            @if (session('transactionsProcesed'))
+                                @if(session('transactionsProcesed')['status'])
+                                    <div class="alert alert-success" role="alert">
+                                        <b>Se procesaron las transacciones: </b><br>
+                                        @foreach(session('transactionsProcesed')['transactions'] as $transaction)
+                                           {{$transaction}}
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="alert alert-secondary" role="alert">
+                                        {{session('transactionsProcesed')['message']}}
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+
                         <br>
                         @if($transactions->count() == 0)
                             <b>No se encontraron transacciones...</b>
