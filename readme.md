@@ -20,8 +20,8 @@ archivo .env correr los singuientes comandos:
    php artisan migrate:fresh --seed
    
 
-- Ingresar a la aplicacion por http a través del navegador y registrarse para poder ingresar.
+- Ingresar a la aplicacion por http a través del navegador y registrarse para poder acceder.
 
-- para correr el cron que revisa las transacciones pendientes por http se debe ejecutar http://dominio/reviewTransactions
+- Para correr el cron que revisa las transacciones pendientes por http se debe ejecutar http://dominio/cronReviewTransactions
 
-- Nota: se puede programar el cron por medio del servidor accediendo al comando crontab -e
+- Nota: se puede programar el cron por medio del servidor accediendo al comando crontab -e 
