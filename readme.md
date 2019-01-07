@@ -9,6 +9,7 @@
   composer
   
  #Instalacion
+ 
  Crear las bases de datos:
 - Aplicacion : "place_to_pay"
 - Pruebas : "place_to_pay_tests"
@@ -35,7 +36,8 @@ archivo .env correr los singuientes comandos:
 
 - Nota: se puede programar el cron por medio del servidor accediendo al comando crontab -e y agregando éste a la lista.
 
-#Pruebas Unitarias
+ #Pruebas Unitarias
+ 
 -Para correr las pruebas unitarias del proyecto las cuales prueban algunas funcionalidades, se debe utilizar el sigiente comando:
 
   vendor/bin/phpunit
