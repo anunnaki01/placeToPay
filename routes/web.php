@@ -15,9 +15,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home', function () {
-    return redirect()->route('transactions');
-});
+//Route::get('/home', function () {
+//    return redirect()->route('transactions');
+//});
 
 Auth::routes();
 Route::get('/transactions','PseController@transactions')->name('transactions');
